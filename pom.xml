@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>sh.yannick.rail</groupId>
+    <artifactId>digital-rail</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>digital-rail</name>
+    <description>A digital interlocking system.</description>
+
+    <licenses>
+        <license>
+            <name>Public Domain</name>
+            <url>https://yannick.sh</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>yannickkirschen</id>
+            <name>Yannick Kirschen</name>
+            <email>yannickkirschen@protonmail.com</email>
+            <organization>Private</organization>
+            <organizationUrl>https://yannick.sh</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/yannickkirschen/digital-rail.git</connection>
+        <developerConnection>scm:git:ssh://github.com:yannickkirschen/digital-rail.git</developerConnection>
+        <url>https://github.com/yannickkirschen/digital-rail</url>
+    </scm>
+
+    <modules>
+        <module>tools</module>
+        <module>digital-rail-api</module>
+        <module>digital-rail-interlocking</module>
+        <module>digital-rail-cli</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+
+        <spring.boot.version>3.1.2</spring.boot.version>
+        <snakeyaml.version>2.0</snakeyaml.version>
+        <httpclient.version>5.2.1</httpclient.version>
+        <reflections.version>0.10.2</reflections.version>
+        <boss.version>1.0.0-SNAPSHOT</boss.version>
+        <tools.version>1.0.0-SNAPSHOT</tools.version>
+        <lombok.version>1.18.26</lombok.version>
+
+        <maven.assembly.plugin.version>3.6.0</maven.assembly.plugin.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
+            <!-- Fixes CVE-2022-41854 and CVE-2022-1471 in transitive dependency from Spring. -->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>${reflections.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>sh.yannick</groupId>
+                <artifactId>tools</artifactId>
+                <version>${tools.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>sh.yannick.rail</groupId>
+                <artifactId>digital-rail-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>sh.yannick.rail</groupId>
+                <artifactId>digital-rail-interlocking</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven.assembly.plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

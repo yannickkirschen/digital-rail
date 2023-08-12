@@ -1,0 +1,2 @@
+[console_scripts]
+rail-concentrator = digital_rail_concentrator.__main__:main

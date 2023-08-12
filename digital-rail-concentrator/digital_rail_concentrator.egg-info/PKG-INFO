@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: digital-rail-concentrator
+Version: 1.0.0
+Summary: Socket server for Digital Rail to communicate with all decoders.
+License: Public Domain
+Description-Content-Type: text/markdown
+
+# Digital Rail Gateway
