@@ -8,6 +8,15 @@ Digital Rail is an interlocking system for model railways. It aims to be as
 realistic as possible and is based on the German railway system. It is written
 in Java and Python and is designed to be used on a Raspberry Pi (Zero).
 
+Basis of the interlocking is a graph using
+an [adjacency list](https://en.wikipedia.org/wiki/Adjacency_list). By using
+the [depth first search](https://en.wikipedia.org/wiki/Depth-first_search)
+algorithm, the interlocking is able to determine all possible paths in the
+graph. Not every path makes logically sense for a train, so we need to filter
+them out. Keep in mind that if there are several paths between two nodes, the
+interlocking will only use the first one it finds. This will be solved in the
+future.
+
 ## State of Development
 
 - 🚧Interlocking
