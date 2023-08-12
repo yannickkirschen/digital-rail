@@ -55,7 +55,7 @@
         <reflections.version>0.10.2</reflections.version>
         <boss.version>1.0.0-SNAPSHOT</boss.version>
         <tools.version>1.0.0-SNAPSHOT</tools.version>
-        <lombok.version>1.18.26</lombok.version>
+        <lombok.version>1.18.28</lombok.version>
 
         <maven.assembly.plugin.version>3.6.0</maven.assembly.plugin.version>
     </properties>
