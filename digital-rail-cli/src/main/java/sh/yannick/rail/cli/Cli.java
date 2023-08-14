@@ -1,6 +1,6 @@
 package sh.yannick.rail.cli;
 
-import sh.yannick.rail.api.AllocationResponse;
+import sh.yannick.rail.api.AllocationApiResponse;
 
 import java.io.Closeable;
 import java.io.Console;
@@ -34,13 +34,13 @@ public class Cli implements Closeable {
             String from = operationParts[0];
             String to = operationParts[1];
 
-            AllocationResponse allocationResponse = client.allocate(from, to);
-            if (allocationResponse.error() != null) {
-                System.out.println("Error: " + allocationResponse.error());
+            AllocationApiResponse allocationApiResponse = client.allocate(from, to);
+            if (allocationApiResponse.error() != null) {
+                System.out.println("Error: " + allocationApiResponse.error());
                 continue;
             }
 
-            System.out.println("Allocated: " + allocationResponse.path());
+            System.out.println("Allocated: " + allocationApiResponse.path());
         }
     }
 
