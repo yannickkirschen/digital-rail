@@ -20,11 +20,49 @@ future.
 ## State of Development
 
 - 🚧Interlocking
-- 🚧Track Field Concentrator
+    - ✅Find all paths (Spurplan)
+    - ✅Determine indication/position of signals/switches on a path
+    - ✅Lock all elements on a path and transmit the indication/position of
+      signals/switches to the concentrator
+    - ✅Release single elements on a path
+    - ⛔Find the best path (currently: first path)
+    - ⛔️Provide flank protection (Flankenschutz)
+    - ⛔Allocate elements in specific order (switches -> flank protective
+      signals -> signals)
+    - ⛔️Communication between interlocking systems
+- 🚧Track Field Concentrator (Gleisfeldkonzentrator, GFK)
 - 🚧CLI
 - ⛔️UI
 - ⛔️Decoders
+- ⛔️Track vacancy detection system (Gleisfreimeldeanlage)
 - ⛔Documentation (I'm so sorry ...)
+
+## Current look and feel
+
+Right now, I have implemented a simple track graph on a breadboard using LEDs
+both for signals and switches. As I want to cover motors for the switches at a
+later point, I have used a relay to simulate the motor. If the switch should
+point to its alternate position, the blue LED is on. If the switch should point
+to its base position, the red LED is off. The image below shows my setup:
+
+![Breadboard](./docs/breadboard.jpg)
+
+The above state can be achieved by typing `A.P2` into the CLI. The track graph
+looks like this:
+
+```mermaid
+flowchart LR
+    toLeft --- A
+    A --- SW1
+    SW1 --- N2
+    N2 --- P2
+    P2 --- SW2
+    SW1 --- N1
+    N1 --- P1
+    P1 --- SW2
+    SW2 --- F
+    F --- toRight
+```
 
 ## Usage
 
@@ -52,27 +90,6 @@ java -jar digital-rail-interlocking/target/digital-rail-interlocking-0.0.1-SNAPS
 
 ```shell
 java -jar digital-rail-cli/target/digital-rail-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar
-```
-
-## CLI Usage
-
-Syntax is `from.to`, e.g. `A.P2`.
-
-The provided track looks like this:
-
-```mermaid
-flowchart LR
-    toLeft --- A
-    A --- SW1
-    SW1 --- N2
-    N2 --- P2
-    P2 --- SW2
-    SW1 --- N1
-    N1 --- P1
-    P1 --- SW2
-    SW2 --- F
-    F --- toRight
-
 ```
 
 ## Architecture
