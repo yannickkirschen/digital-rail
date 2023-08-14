@@ -4,6 +4,16 @@
             "name": "interlocking.signalling-system",
             "type": "java.lang.String",
             "description": "Name of the bean implementing sh.yannick.rail.core.signalling.SignallingSystem to be used as signalling system."
+        },
+        {
+            "name": "interlocking.socket.server.ip",
+            "type": "java.lang.String",
+            "description": "IP of the concentrator socket server."
+        },
+        {
+            "name": "interlocking.document.path",
+            "type": "java.lang.String",
+            "description": "Path to the document serving wth this server."
         }
     ]
 }

@@ -3,3 +3,10 @@ server:
 
 interlocking:
     signalling-system: SimpleSignallingSystem
+
+    socket:
+        server:
+            ip: ''
+
+    document:
+        path: ''

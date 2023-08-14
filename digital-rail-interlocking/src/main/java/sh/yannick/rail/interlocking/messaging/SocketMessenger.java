@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class SocketMessenger implements Messenger, Closeable {
     private final SocketClient client;
 
-    public SocketMessenger(@Value("{socket.server.ip}") String ip) throws IOException {
+    public SocketMessenger(@Value("${interlocking.socket.server.ip}") String ip) throws IOException {
         client = new SocketClient();
         client.connect(ip, 6666);
     }

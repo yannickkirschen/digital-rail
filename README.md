@@ -43,8 +43,8 @@ rail-concentrator
 
 ```shell
 mvn clean package
-export DOCUMENT_PATH=./examples/document.json
-export SOCKET_SERVER_IP=<ip or hostname>
+export INTERLOCKING_DOCUMENT_PATH=./examples/document.json
+export INTERLOCKING_SOCKET_SERVER_IP=<ip or hostname>
 java -jar digital-rail-interlocking/target/digital-rail-interlocking-0.0.1-SNAPSHOT.jar
 ```
 

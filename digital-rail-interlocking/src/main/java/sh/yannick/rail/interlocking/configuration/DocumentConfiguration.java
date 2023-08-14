@@ -13,7 +13,7 @@ import java.io.IOException;
 public class DocumentConfiguration {
     private final Document document;
 
-    public DocumentConfiguration(@Value("${document.path}") String path) throws IOException {
+    public DocumentConfiguration(@Value("${interlocking.document.path}") String path) throws IOException {
         this.document = new DocumentReader(new FileInputStream(path)).read();
     }
 
