@@ -1,8 +1,8 @@
-package sh.yannick.rail.core.signalling;
+package sh.yannick.rail.interlocking.signalling;
 
 import org.springframework.stereotype.Component;
-import sh.yannick.rail.core.track.StopVertex;
-import sh.yannick.rail.core.track.TrackVertex;
+import sh.yannick.rail.interlocking.track.StopVertex;
+import sh.yannick.rail.interlocking.track.TrackVertex;
 
 import java.util.HashMap;
 import java.util.List;

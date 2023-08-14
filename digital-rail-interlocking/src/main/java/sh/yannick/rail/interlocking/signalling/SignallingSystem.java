@@ -1,6 +1,6 @@
-package sh.yannick.rail.core.signalling;
+package sh.yannick.rail.interlocking.signalling;
 
-import sh.yannick.rail.core.track.TrackVertex;
+import sh.yannick.rail.interlocking.track.TrackVertex;
 
 import java.util.List;
 import java.util.Map;

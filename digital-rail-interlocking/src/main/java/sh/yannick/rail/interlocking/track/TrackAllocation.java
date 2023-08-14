@@ -1,4 +1,4 @@
-package sh.yannick.rail.core.track;
+package sh.yannick.rail.interlocking.track;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

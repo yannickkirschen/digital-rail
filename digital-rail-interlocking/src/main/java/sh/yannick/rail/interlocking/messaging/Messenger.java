@@ -1,4 +1,4 @@
-package sh.yannick.rail.core.messaging;
+package sh.yannick.rail.interlocking.messaging;
 
 import java.io.IOException;
 import java.util.Set;

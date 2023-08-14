@@ -1,9 +1,9 @@
-package sh.yannick.rail.core.configuration;
+package sh.yannick.rail.interlocking.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import sh.yannick.rail.core.track.TrackVertex;
+import sh.yannick.rail.interlocking.track.TrackVertex;
 import sh.yannick.tools.math.Graph;
 
 import java.io.FileInputStream;

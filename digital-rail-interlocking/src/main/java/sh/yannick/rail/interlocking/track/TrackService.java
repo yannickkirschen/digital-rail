@@ -1,13 +1,13 @@
-package sh.yannick.rail.core.track;
+package sh.yannick.rail.interlocking.track;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import sh.yannick.rail.core.configuration.Document;
-import sh.yannick.rail.core.messaging.Message;
-import sh.yannick.rail.core.messaging.Messenger;
-import sh.yannick.rail.core.signalling.SignallingSystem;
+import sh.yannick.rail.interlocking.configuration.Document;
+import sh.yannick.rail.interlocking.messaging.Message;
+import sh.yannick.rail.interlocking.messaging.Messenger;
+import sh.yannick.rail.interlocking.signalling.SignallingSystem;
 
 import java.io.IOException;
 import java.util.HashMap;

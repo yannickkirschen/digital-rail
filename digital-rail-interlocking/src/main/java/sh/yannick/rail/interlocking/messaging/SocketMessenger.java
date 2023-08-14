@@ -1,4 +1,4 @@
-package sh.yannick.rail.core.messaging;
+package sh.yannick.rail.interlocking.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;

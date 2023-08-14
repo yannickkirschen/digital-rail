@@ -1,4 +1,4 @@
-package sh.yannick.rail.core.track;
+package sh.yannick.rail.interlocking.track;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

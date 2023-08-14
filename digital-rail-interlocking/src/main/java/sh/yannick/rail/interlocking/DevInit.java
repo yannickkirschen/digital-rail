@@ -1,8 +1,8 @@
-package sh.yannick.rail.core;
+package sh.yannick.rail.interlocking;
 
-import sh.yannick.rail.core.track.StopVertex;
-import sh.yannick.rail.core.track.SwitchVertex;
-import sh.yannick.rail.core.track.TrackVertex;
+import sh.yannick.rail.interlocking.track.StopVertex;
+import sh.yannick.rail.interlocking.track.SwitchVertex;
+import sh.yannick.rail.interlocking.track.TrackVertex;
 import sh.yannick.tools.math.Graph;
 
 public class DevInit {

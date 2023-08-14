@@ -1,8 +1,8 @@
-package sh.yannick.rail.core.configuration;
+package sh.yannick.rail.interlocking.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import sh.yannick.rail.core.track.TrackVertex;
+import sh.yannick.rail.interlocking.track.TrackVertex;
 import sh.yannick.tools.math.Graph;
 
 import java.util.List;
