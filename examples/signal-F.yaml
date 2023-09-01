@@ -1,0 +1,15 @@
+apiVersion: rail.yannick.sh/v1alpha1
+kind: Signal
+
+metadata:
+    name: signal-F
+
+    labels:
+        rail.yannick.sh/displayName: F
+        rail.yannick.sh/signalling-system: Ks
+        rail.yannick.sh/raspberry: rpi
+        rail.yannick.sh/raspberry-stop-pin: 17
+        rail.yannick.sh/raspberry-clear-pin: 27
+
+spec:
+    indication: stop

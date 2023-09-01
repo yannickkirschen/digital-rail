@@ -1,0 +1,126 @@
+package sh.yannick.rail.interlocking.listener;
+
+import sh.yannick.math.DepthFirstSearch;
+import sh.yannick.math.GraphWalkingDecision;
+import sh.yannick.rail.api.resource.*;
+import sh.yannick.rail.interlocking.signalling.SimpleSignallingSystem;
+import sh.yannick.rail.interlocking.switches.BasicSwitchTranslator;
+import sh.yannick.state.Listener;
+import sh.yannick.state.Resource;
+import sh.yannick.state.ResourceListener;
+import sh.yannick.state.State;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@Listener(apiVersion = "rail.yannick.sh/v1alpha1", kind = "Allocation")
+public class AllocationListener implements ResourceListener<Allocation.Spec, Allocation.Status, Allocation> {
+    private static final String BLOCK_API_VERSION = "rail.yannick.sh/v1alpha1";
+
+    private State state;
+
+    @Override
+    public void onInit(State state) {
+        this.state = state;
+    }
+
+    @Override
+    public void onCreate(Allocation allocation) {
+        Optional<Graph> optionalGraph = state.getResource("rail.yannick.sh/v1alpha1", "Graph", allocation.getSpec().getGraph(), Graph.class);
+        if (optionalGraph.isEmpty()) {
+            allocation.addError("Allocation %s requires graph %s that does not exist.", allocation.getMetadata().getName(), allocation.getSpec().getGraph());
+            return;
+        }
+
+        String fromName = allocation.getSpec().getFrom();
+        String toName = allocation.getSpec().getTo();
+
+        Optional<Block> optionalFrom = state.getResource(BLOCK_API_VERSION, "Block", fromName, Block.class);
+        Optional<Block> optionalTo = state.getResource(BLOCK_API_VERSION, "Block", toName, Block.class);
+
+        if (optionalFrom.isEmpty()) {
+            allocation.addError("Resource Block %s not found for %s.", fromName, BLOCK_API_VERSION);
+            return;
+        }
+
+        if (optionalTo.isEmpty()) {
+            allocation.addError("Resource Block %s not found for %s.", toName, BLOCK_API_VERSION);
+            return;
+        }
+
+        if (allocation.getStatus() == null) {
+            allocation.setStatus(new Allocation.Status());
+        }
+
+        allocation.getStatus().setFrom(fromName);
+        allocation.getStatus().setTo(toName);
+        allocation.getStatus().setProgress(Allocation.Progress.CALCULATING);
+
+        Resource<Graph.Spec, Graph.Status> graph = optionalGraph.get();
+        DepthFirstSearch<BlockVertex> search = new DepthFirstSearch<>(graph.getStatus().getVertices(), graph.getStatus().getAdjacencyList(), new SwitchDecision());
+        search.search(fromName, toName);
+        List<List<Block>> paths = search
+            .getPaths()
+            .stream()
+            .map(path -> path
+                .stream()
+                .map(step -> {
+                    Optional<Block> block = state.getResource(BLOCK_API_VERSION, "Block", step, Block.class);
+                    if (block.isEmpty()) {
+                        throw new IllegalArgumentException("Block " + step + " should exist but doesn't.");
+                    }
+                    return block.get();
+                }).toList()).toList();
+
+        allocation.getStatus().setAllPaths(search.getPaths());
+
+        // TODO: find best path
+        List<Block> path = paths.get(0);
+        allocation.getStatus().setChosenPath(path.stream().map(block -> block.getMetadata().getName()).toList());
+        allocation.getStatus().setProgress(Allocation.Progress.ALLOCATING);
+
+        // TODO: configure switches
+        List<Switch> switches = new BasicSwitchTranslator(state).translate(path);
+        switches.forEach(state::addResource); // Update all switches
+        List<String> switchErrors = switches.stream().flatMap(_switch -> {
+            if (_switch.getErrors() != null) {
+                return _switch.getErrors().stream();
+            }
+            return null;
+        }).toList();
+        if (!switchErrors.isEmpty()) {
+            allocation.addErrors(switchErrors);
+            return;
+        }
+
+        // TODO: rollback
+
+        // TODO: configure signalling system
+        List<Signal> signals = new SimpleSignallingSystem(state).translate(path);
+        signals.forEach(state::addResource); // Update all signals
+
+        List<String> errors = signals.stream().flatMap(signal -> {
+            if (signal.getErrors() != null) {
+                return signal.getErrors().stream();
+            }
+            return null;
+        }).toList();
+        if (!errors.isEmpty()) {
+            allocation.addErrors(errors);
+            return;
+        }
+
+        signals.forEach(signal -> signal.getStatus().setLocked(true));
+        path.forEach(block -> block.getStatus().setLocked(true));
+        allocation.getStatus().setProgress(Allocation.Progress.LOCKED);
+    }
+
+    private static class SwitchDecision implements GraphWalkingDecision<BlockVertex> {
+        @Override
+        public boolean shouldWalk(BlockVertex from, BlockVertex to, BlockVertex via) {
+            Map<String, String> prohibits = via.getBlock().getSpec().getProhibits();
+            return !prohibits.containsKey(from.getLabel()) || !prohibits.get(from.getLabel()).equals(to.getLabel());
+        }
+    }
+}

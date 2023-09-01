@@ -1,0 +1,11 @@
+server:
+    shutdown: graceful
+
+spring:
+    rsocket:
+        server:
+            port: 7000
+
+logging:
+    level:
+        org.reflections.Reflections: WARN

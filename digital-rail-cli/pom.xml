@@ -28,6 +28,11 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -43,7 +48,7 @@
 
                     <archive>
                         <manifest>
-                            <mainClass>sh.yannick.rail.cli.Main</mainClass>
+                            <mainClass>sh.yannick.rail.applyHandler.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

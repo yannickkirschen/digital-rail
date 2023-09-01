@@ -1,35 +1,45 @@
 package sh.yannick.rail.interlocking.signalling;
 
-import org.springframework.stereotype.Component;
-import sh.yannick.rail.interlocking.track.StopVertex;
-import sh.yannick.rail.interlocking.track.TrackVertex;
+import lombok.RequiredArgsConstructor;
+import sh.yannick.rail.api.resource.Block;
+import sh.yannick.rail.api.resource.BlockStopPoint;
+import sh.yannick.rail.api.resource.Signal;
+import sh.yannick.state.State;
 
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-@Component("SimpleSignallingSystem")
+@RequiredArgsConstructor
 public class SimpleSignallingSystem implements SignallingSystem {
+    private final State state;
+
     @Override
-    public Map<String, Integer> translate(List<TrackVertex> path) {
-        Map<String, Integer> desiredState = new HashMap<>();
+    public List<Signal> translate(List<Block> path) {
+        List<Signal> signals = new LinkedList<>();
 
         for (int i = 0; i < path.size(); i++) {
-            TrackVertex current = path.get(i);
-            TrackVertex previous = i > 0 ? path.get(i - 1) : null;
+            Block current = path.get(i);
+            Block next = i < path.size() - 1 ? path.get(i + 1) : null;
 
+            if (!current.getSpec().getStopPoints().isEmpty()) {
+                for (BlockStopPoint stop : current.getSpec().getStopPoints()) {
+                    int value = 0;
 
-            if (current instanceof StopVertex stopVertex) {
-                int state = (previous != null && stopVertex.getPointsTo().equals(previous.getLabel())) || path.size() - 1 == i ? 0 : 1;
-                desiredState.put(stopVertex.getLabel(), state);
+                    if (next != null) {
+                        if (stop.getTo().equals(next.getMetadata().getName())) {
+                            value = 1;
+                        }
+                    }
+
+                    Signal signal = state.getResource("rail.yannick.sh/v1alpha1", "Signal", stop.getName(), Signal.class).orElseThrow();
+                    signal.getSpec().setIndication(value == 0 ? Signal.Indication.STOP : Signal.Indication.CLEAR);
+                    signal.getStatus().setSystemValue(value);
+
+                    signals.add(signal);
+                }
             }
         }
 
-        return desiredState;
-    }
-
-    @Override
-    public int getStop() {
-        return 0;
+        return signals;
     }
 }

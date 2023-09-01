@@ -1,0 +1,1 @@
+Digital Rail - Concentrator v${project.version}

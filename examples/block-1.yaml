@@ -1,0 +1,12 @@
+apiVersion: rail.yannick.sh/v1alpha1
+kind: Block
+
+metadata:
+    name: block-1
+
+spec:
+    locked: false
+
+    stopPoints:
+        -   to: block-2
+            name: signal-A

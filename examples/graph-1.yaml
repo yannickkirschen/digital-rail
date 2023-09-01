@@ -1,0 +1,22 @@
+apiVersion: rail.yannick.sh/v1alpha1
+kind: Graph
+
+metadata:
+    name: graph-1
+
+spec:
+    verticesFromRef:
+        - block-1
+        - block-2
+        - block-3
+        - block-4
+        - block-5
+        - block-6
+
+    adjacencyList:
+        block-1: [ block-2 ]
+        block-2: [ block-1, block-3, block-4 ]
+        block-3: [ block-2, block-5 ]
+        block-4: [ block-2, block-5 ]
+        block-5: [ block-3, block-4, block-6 ]
+        block-6: [ block-5 ]

@@ -1,0 +1,13 @@
+apiVersion: rail.yannick.sh/v1alpha1
+kind: Switch
+
+metadata:
+    name: switch-SW1
+
+    labels:
+        rail.yannick.sh/displayName: SW1
+        rail.yannick.sh/raspberry: rpi
+        rail.yannick.sh/raspberry-alternate-pin: 4
+
+spec:
+    position: base

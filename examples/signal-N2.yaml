@@ -1,0 +1,15 @@
+apiVersion: rail.yannick.sh/v1alpha1
+kind: Signal
+
+metadata:
+    name: signal-N2
+
+    labels:
+        rail.yannick.sh/displayName: N2
+        rail.yannick.sh/signalling-system: Ks
+        rail.yannick.sh/raspberry: rpi
+        rail.yannick.sh/raspberry-stop-pin: 0
+        rail.yannick.sh/raspberry-clear-pin: 5
+
+spec:
+    indication: stop

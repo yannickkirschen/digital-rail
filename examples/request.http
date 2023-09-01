@@ -1,5 +1,0 @@
-### Allocate track
-POST http://localhost:8080/allocate?from=A&to=P2
-
-### Release element
-POST http://localhost:8080/release?element=P1

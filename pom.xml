@@ -36,9 +36,13 @@
     </scm>
 
     <modules>
-        <module>tools</module>
+        <module>gpio</module>
+        <module>math</module>
+        <module>state</module>
+
         <module>digital-rail-api</module>
         <module>digital-rail-interlocking</module>
+        <module>digital-rail-concentrator</module>
         <module>digital-rail-cli</module>
     </modules>
 
@@ -51,11 +55,18 @@
 
         <spring.boot.version>3.1.3</spring.boot.version>
         <snakeyaml.version>2.2</snakeyaml.version>
+        <pi4j.version>2.3.0</pi4j.version>
         <httpclient.version>5.2.1</httpclient.version>
         <reflections.version>0.10.2</reflections.version>
         <boss.version>1.0.0-SNAPSHOT</boss.version>
+        <gpio.version>1.0.0-SNAPSHOT</gpio.version>
+        <math.version>1.0.0-SNAPSHOT</math.version>
+        <state.version>1.0.0-SNAPSHOT</state.version>
         <tools.version>1.0.0-SNAPSHOT</tools.version>
 
+        <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
+        <maven.antrun.plugin.version>3.1.0</maven.antrun.plugin.version>
+        <maven.dependency.plugin.version>3.6.0</maven.dependency.plugin.version>
         <maven.assembly.plugin.version>3.6.0</maven.assembly.plugin.version>
     </properties>
 
@@ -77,6 +88,24 @@
             </dependency>
 
             <dependency>
+                <groupId>com.pi4j</groupId>
+                <artifactId>pi4j-core</artifactId>
+                <version>${pi4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.pi4j</groupId>
+                <artifactId>pi4j-plugin-raspberrypi</artifactId>
+                <version>${pi4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.pi4j</groupId>
+                <artifactId>pi4j-plugin-pigpio</artifactId>
+                <version>${pi4j.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5</artifactId>
                 <version>${httpclient.version}</version>
@@ -89,20 +118,26 @@
             </dependency>
 
             <dependency>
-                <groupId>sh.yannick</groupId>
-                <artifactId>tools</artifactId>
-                <version>${tools.version}</version>
+                <groupId>sh.yannick.gpio</groupId>
+                <artifactId>gpio</artifactId>
+                <version>${gpio.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>sh.yannick.math</groupId>
+                <artifactId>math</artifactId>
+                <version>${math.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>sh.yannick.state</groupId>
+                <artifactId>state</artifactId>
+                <version>${state.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>sh.yannick.rail</groupId>
                 <artifactId>digital-rail-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>sh.yannick.rail</groupId>
-                <artifactId>digital-rail-interlocking</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
@@ -120,8 +155,32 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven.jar.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${maven.antrun.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven.dependency.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${maven.assembly.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring.boot.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

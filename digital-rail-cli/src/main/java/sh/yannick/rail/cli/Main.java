@@ -1,14 +1,24 @@
 package sh.yannick.rail.cli;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 public class Main {
-    public static void main(String[] args) throws URISyntaxException {
-        try (Cli cli = new Cli()) {
-            cli.run();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private static final String USAGE = """
+        Usage: java -jar digital-rail-cli.jar <command>
+                Commands:
+                  apply
+            """;
+
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.println(USAGE);
+            System.exit(1);
+        }
+
+        switch (args[0]) {
+            case "apply" -> new ApplyHandler().apply(args);
+            default -> {
+                System.out.println(USAGE);
+                System.exit(1);
+            }
         }
     }
 }

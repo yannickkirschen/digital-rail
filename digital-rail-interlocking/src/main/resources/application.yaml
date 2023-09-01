@@ -1,16 +1,7 @@
 server:
     port: 8080
+    shutdown: graceful
 
-spring:
-    artemis:
-        mode: embedded
-
-interlocking:
-    signalling-system: SimpleSignallingSystem
-
-    socket:
-        server:
-            ip: ''
-
-    document:
-        path: ''
+logging:
+    level:
+        org.reflections.Reflections: WARN

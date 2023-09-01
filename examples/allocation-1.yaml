@@ -1,0 +1,10 @@
+apiVersion: rail.yannick.sh/v1alpha1
+kind: Allocation
+
+metadata:
+    name: allocation-1
+
+spec:
+    from: block-1
+    to: block-4
+    graph: graph-1

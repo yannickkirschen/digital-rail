@@ -12,4 +12,16 @@
     </parent>
 
     <artifactId>digital-rail-api</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>sh.yannick.math</groupId>
+            <artifactId>math</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>sh.yannick.state</groupId>
+            <artifactId>state</artifactId>
+        </dependency>
+    </dependencies>
 </project>

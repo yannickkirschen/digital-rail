@@ -1,12 +1,11 @@
 # Digital Rail
 
 [![Maven Package](https://github.com/yannickkirschen/digital-rail/actions/workflows/maven-package.yml/badge.svg)](https://github.com/yannickkirschen/digital-rail/actions/workflows/maven-package.yml)
-[![Python Build](https://github.com/yannickkirschen/digital-rail/actions/workflows/python-build.yml/badge.svg)](https://github.com/yannickkirschen/digital-rail/actions/workflows/python-build.yml)
 [![GitHub release](https://img.shields.io/github/release/yannickkirschen/digital-rail.svg)](https://github.com/yannickkirschen/digital-rail/releases/)
 
 Digital Rail is an interlocking system for model railways. It aims to be as
 realistic as possible and is based on the German railway system. It is written
-in Java and Python and is designed to be used on a Raspberry Pi (Zero).
+in Java and is designed to be used on a Raspberry Pi (Zero).
 
 Basis of the interlocking is a graph using
 an [adjacency list](https://en.wikipedia.org/wiki/Adjacency_list). By using
@@ -16,6 +15,29 @@ graph. Not every path makes logically sense for a train, so we need to filter
 them out. Keep in mind that if there are several paths between two nodes, the
 interlocking will only use the first one it finds. This will be solved in the
 future.
+
+It uses a declarative API to define just anything. The following example shows
+how a signal could look like:
+
+```yaml
+apiVersion: rail.yannick.sh/v1alpha1
+kind: Signal
+
+metadata:
+    name: signal-A
+
+    labels:
+        rail.yannick.sh/displayName: A
+        rail.yannick.sh/signalling-system: Ks
+        rail.yannick.sh/raspberry: rpi
+        rail.yannick.sh/raspberry-stop-pin: 19
+        rail.yannick.sh/raspberry-clear-pin: 26
+
+spec:
+    indication: stop
+```
+
+You can find all example resources in `./examples`.
 
 ## State of Development
 
@@ -66,30 +88,22 @@ flowchart LR
 
 ## Usage
 
-### Build and run concentrator
-
-```shell
-cd digital-rail-concentrator
-python -m pip install --upgrade pip wheel
-python setup.py bdist_wheel build
-# After transferring the .whl file to the pi:
-python -m pip install digital_rail_concentrator-0.0.1-py3-none-any.whl
-rail-concentrator
-```
-
-### Build and run interlocking
+### Build
 
 ```shell
 mvn clean package
-export INTERLOCKING_DOCUMENT_PATH=./examples/document.json
-export INTERLOCKING_SOCKET_SERVER_IP=<ip or hostname>
-java -jar digital-rail-interlocking/target/digital-rail-interlocking-0.0.1-SNAPSHOT.jar
 ```
 
-### Run CLI
+### Run
 
 ```shell
-java -jar digital-rail-cli/target/digital-rail-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+# On the Pi
+scp -r distribution user@pi:/home/user
+sudo ./distribution/run.sh # in /home/user
+
+# On your machine
+java -jar digital-rail-interlocking/target/digital-rail-interlocking-1.0.0-SNAPSHOT.jar
+java -jar digital-rail-cli/target/digital-rail-cli-1.0.0-SNAPSHOT-jar-with-dependencies.jar
 ```
 
 ## Architecture
