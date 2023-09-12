@@ -30,7 +30,9 @@ public class RaspberrySignalListener implements ResourceListener<Signal.Spec, Si
     @Override
     public void onUpdate(Signal signal) {
         log.info("Updating signal {} to {}", signal.getMetadata().getName(), signal.getStatus().getSystemValue());
-        Raspberry raspberry = state.getResource("embedded.yannick.sh/v1alpha1", "Raspberry", "rpi", Raspberry.class).orElseThrow();
+
+        String rpi = signal.getMetadata().getLabels().get("rail.yannick.sh/raspberry");
+        Raspberry raspberry = state.getResource("embedded.yannick.sh/v1alpha1", "Raspberry", rpi, Raspberry.class).orElseThrow();
 
         int systemValue = signal.getStatus().getSystemValue();
 

@@ -30,7 +30,9 @@ public class RaspberrySwitchListener implements ResourceListener<Switch.Spec, Sw
     @Override
     public void onUpdate(Switch _switch) {
         log.info("Updating switch {} to {}", _switch.getMetadata().getName(), _switch.getStatus().getPosition());
-        Raspberry raspberry = state.getResource("embedded.yannick.sh/v1alpha1", "Raspberry", "rpi", Raspberry.class).orElseThrow();
+
+        String rpi = _switch.getMetadata().getLabels().get("rail.yannick.sh/raspberry");
+        Raspberry raspberry = state.getResource("embedded.yannick.sh/v1alpha1", "Raspberry", rpi, Raspberry.class).orElseThrow();
 
         Switch.Position position = _switch.getSpec().getPosition();
 
