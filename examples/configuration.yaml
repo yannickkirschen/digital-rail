@@ -1,0 +1,8 @@
+apiVersion: rail.yannick.sh/v1alpha1
+kind: Configuration
+
+metadata:
+    name: configuration
+
+spec:
+    signalling-system: Simple

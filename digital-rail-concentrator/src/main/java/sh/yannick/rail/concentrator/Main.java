@@ -15,9 +15,10 @@ public class Main {
     public State getState() {
         // Spring detects that State implements Closeable and will call close() on shutdown.
         return State
-            .getEmpty()
+            .builder()
             .withName("rail-concentrator")
             .withPackages("sh.yannick.rail.api", "sh.yannick.rail.concentrator")
+            .build()
             .initializeListeners();
     }
 }
