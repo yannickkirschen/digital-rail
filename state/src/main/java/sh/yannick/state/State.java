@@ -5,95 +5,35 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class State implements Closeable {
-    private final Map<ResourceKey, Resource<?, ?>> resources = new HashMap<>();
-    private final Map<SpecKey, Class<? extends Resource<?, ?>>> baseClasses = new HashMap<>();
-    private final Map<SpecKey, Class<?>> specDefinitions = new HashMap<>();
-    private final Map<SpecKey, Class<?>> statusDefinitions = new HashMap<>();
-    private final Map<SpecKey, ResourceListener<?, ?, ?>> listeners = new HashMap<>();
+    @Getter
+    @Setter
+    private String name;
 
-    private String name = "unnamed";
+    private Map<ResourceKey, Resource<?, ?>> resources;
+    private Map<SpecKey, Class<? extends Resource<?, ?>>> baseClasses;
+    private Map<SpecKey, Class<?>> specDefinitions;
+    private Map<SpecKey, Class<?>> statusDefinitions;
+    private Map<SpecKey, ResourceListener<?, ?, ?>> listeners;
 
-    private State() {
-    }
-
-    public static State getEmpty() { // TODO: use builder pattern
-        return new State();
-    }
-
-    public State withName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public State withPackages(String... packagePrefixes) {
-        log.info("Scanning packages {} for bases classes, spec/status definitions and listeners.", Arrays.toString(packagePrefixes));
-
-        ConfigurationBuilder builder = new ConfigurationBuilder();
-        for (String packagePrefix : packagePrefixes) {
-            builder.addUrls(ClasspathHelper.forPackage(packagePrefix, State.class.getClassLoader()));
-        }
-        Reflections reflections = new Reflections(builder.setScanners(Scanners.TypesAnnotated));
-
-        for (Class<?> clazz : reflections.getTypesAnnotatedWith(Resource.BaseClass.class)) {
-            Resource.BaseClass baseClass = clazz.getAnnotation(Resource.BaseClass.class);
-            if (Resource.class.isAssignableFrom(clazz)) {
-                baseClasses.put(new SpecKey(baseClass.apiVersion(), baseClass.kind()), (Class<? extends Resource<?, ?>>) clazz); // Unchecked, but we know it's safe
-                log.debug("Registered base class {} for {}/{}", clazz.getName(), baseClass.apiVersion(), baseClass.kind());
-            } else {
-                throw new IllegalArgumentException("Class " + clazz.getName() + " is annotated with @BaseClass but does not extend Resource<?, ?>");
-            }
-        }
-
-        for (Class<?> clazz : reflections.getTypesAnnotatedWith(Resource.SpecDefinition.class)) {
-            Resource.SpecDefinition specDefinition = clazz.getAnnotation(Resource.SpecDefinition.class);
-            specDefinitions.put(new SpecKey(specDefinition.apiVersion(), specDefinition.kind()), clazz);
-            log.debug("Registered spec definition {} for {}/{}", clazz.getName(), specDefinition.apiVersion(), specDefinition.kind());
-        }
-
-        for (Class<?> clazz : reflections.getTypesAnnotatedWith(Resource.StatusDefinition.class)) {
-            Resource.StatusDefinition statusDefinition = clazz.getAnnotation(Resource.StatusDefinition.class);
-            statusDefinitions.put(new SpecKey(statusDefinition.apiVersion(), statusDefinition.kind()), clazz);
-            log.debug("Registered status definition {} for {}/{}", clazz.getName(), statusDefinition.apiVersion(), statusDefinition.kind());
-        }
-
-        for (Class<?> clazz : reflections.getTypesAnnotatedWith(Listener.class)) {
-            if (ResourceListener.class.isAssignableFrom(clazz)) {
-                try {
-                    Listener listenerDefinition = clazz.getAnnotation(Listener.class);
-                    ResourceListener<?, ?, ?> listener = ((Class<ResourceListener<?, ?, ?>>) clazz).getConstructor().newInstance();// Unchecked, but we know it's safe
-                    listeners.put(new SpecKey(listenerDefinition.apiVersion(), listenerDefinition.kind()), listener);
-                    log.debug("Registered listener {} for {}/{}", clazz.getName(), listenerDefinition.apiVersion(), listenerDefinition.kind());
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                         NoSuchMethodException e) {
-                    throw new IllegalArgumentException(e);
-                }
-
-            } else {
-                throw new IllegalArgumentException("Class " + clazz.getName() + " is annotated with @Listener but does not implement ResourceListener<?, ?>");
-            }
-        }
-
-        log.info("Registered {} base classes, {} spec definitions, {} status definitions and {} listeners", baseClasses.size(), specDefinitions.size(), statusDefinitions.size(), listeners.size());
-
-        return this;
+    public static StateBuilder builder() {
+        return new StateBuilder();
     }
 
     public State initializeListeners() {
@@ -101,12 +41,13 @@ public class State implements Closeable {
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     public <T, S, C extends Resource<T, S>> C addResource(File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         Resource<T, S> resource = addResource(mapper, mapper.readTree(file));
 
         SpecKey key = new SpecKey(resource.getApiVersion(), resource.getKind());
-        Class<C> baseClass = (Class<C>) baseClasses.get(key);
+        Class<C> baseClass = (Class<C>) baseClasses.get(key); // Here, we don't know what class to cast to, so we have to use an unchecked cast
         if (baseClass == null) {
             throw new IllegalArgumentException("No base class found for apiVersion " + resource.getApiVersion() + " and kind " + resource.getKind());
         }
@@ -221,6 +162,7 @@ public class State implements Closeable {
         return Optional.of(clazz.cast(resource));
     }
 
+    @SuppressWarnings("unchecked")
     private <T, S, C extends Resource<T, S>> void triggerUpdates(C resource, ResourceKey key) {
         ResourceListener<T, S, C> listener = (ResourceListener<T, S, C>) listeners.get(new SpecKey(resource.getApiVersion(), resource.getKind())); // Unchecked, but we know it's safe
         if (listener == null) {
@@ -235,7 +177,7 @@ public class State implements Closeable {
                     resources.put(key, resource);
                     listener.onUpdate(resource);
                 }
-            } catch (Exception e) { // TODO: maybe too broad?
+            } catch (Exception e) {
                 log.error("Error while processing resource {}/{}/{}", resource.getApiVersion(), resource.getKind(), resource.getMetadata().getName(), e);
                 resource.addError(e.getMessage());
             }
@@ -254,20 +196,5 @@ public class State implements Closeable {
         statusDefinitions.clear();
 
         log.info("State {} closed.", name);
-    }
-
-    @Data
-    @RequiredArgsConstructor
-    public static class ResourceKey {
-        private final String apiVersion;
-        private final String kind;
-        private final String name;
-    }
-
-    @Data
-    @RequiredArgsConstructor
-    public static class SpecKey {
-        private final String apiVersion;
-        private final String kind;
     }
 }
