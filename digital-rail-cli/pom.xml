@@ -48,7 +48,7 @@
 
                     <archive>
                         <manifest>
-                            <mainClass>sh.yannick.rail.applyHandler.Main</mainClass>
+                            <mainClass>sh.yannick.rail.cli.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
