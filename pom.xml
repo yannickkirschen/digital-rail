@@ -62,8 +62,7 @@
         <gpio.version>1.0.0-SNAPSHOT</gpio.version>
         <math.version>1.0.0-SNAPSHOT</math.version>
         <state.version>1.0.0-SNAPSHOT</state.version>
-        <tools.version>1.0.0-SNAPSHOT</tools.version>
-
+        
         <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
         <maven.antrun.plugin.version>3.1.0</maven.antrun.plugin.version>
         <maven.dependency.plugin.version>3.6.0</maven.dependency.plugin.version>
