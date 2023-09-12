@@ -6,7 +6,6 @@ metadata:
 
     labels:
         rail.yannick.sh/displayName: P2
-        rail.yannick.sh/signalling-system: Ks
         rail.yannick.sh/raspberry: rpi
         rail.yannick.sh/raspberry-stop-pin: 9
         rail.yannick.sh/raspberry-clear-pin: 11
