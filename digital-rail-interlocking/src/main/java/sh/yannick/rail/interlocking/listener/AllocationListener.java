@@ -83,6 +83,13 @@ public class AllocationListener implements ResourceListener<Allocation.Spec, All
         status.setChosenPath(path.stream().map(block -> block.getMetadata().getName()).toList());
         status.setProgress(Allocation.Progress.ALLOCATING);
 
+        for (Block block : path) {
+            if (block.getStatus().isLocked()) {
+                allocation.addError("Block %s is already blocked.", block.getMetadata().getName());
+                return;
+            }
+        }
+
         List<Switch> switches = new BasicSwitchTranslator(state).translate(path);
         List<Signal> signals = SignallingSystem.get(state, configuration.getSpec().getSignallingSystem()).translate(path);
 
@@ -104,21 +111,21 @@ public class AllocationListener implements ResourceListener<Allocation.Spec, All
 
         AllocationTransaction transaction = new AllocationTransaction(state, allocation, switches, signals);
         if (transaction.commit()) {
+            path.forEach(block -> block.getStatus().setLocked(true));
             switches.forEach(_switch -> _switch.getStatus().setLocked(true));
             signals.forEach(signal -> signal.getStatus().setLocked(true));
-            path.forEach(block -> block.getStatus().setLocked(true));
             status.setProgress(Allocation.Progress.LOCKED);
         } else {
             transaction.rollback();
         }
     }
 
-    @Override
-    public void onUpdate(Allocation allocation) {
-        if (!allocation.getStatus().getProgress().equals(Allocation.Progress.RELEASED)) {
-            allocation.addError("Allocation %s is not released yet and thus cannot be updated.", allocation.getMetadata().getName());
-        }
-    }
+//    @Override
+//    public void onUpdate(Allocation allocation) {
+//        if (!allocation.getStatus().getProgress().equals(Allocation.Progress.RELEASED)) {
+//            allocation.addError("Allocation %s is not released yet and thus cannot be updated.", allocation.getMetadata().getName());
+//        }
+//    }
 
     private static class SwitchDecision implements GraphWalkingDecision<BlockVertex> {
         @Override
