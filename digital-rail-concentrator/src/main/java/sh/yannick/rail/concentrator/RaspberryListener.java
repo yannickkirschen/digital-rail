@@ -40,7 +40,6 @@ public class RaspberryListener implements ResourceListener<Raspberry.Spec, Raspb
             }
         }
 
-        // TODO: find out why status is null when executing second, third, ... time
         raspberry.getStatus().setPins(raspberry.getSpec().getPins());
     }
 
