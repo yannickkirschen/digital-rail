@@ -8,9 +8,12 @@ import sh.yannick.state.State;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 public class SimpleSignallingSystem implements SignallingSystem {
+    private static final String SIGNAL_API_VERSION = "rail.yannick.sh/v1alpha1";
+
     private final State state;
 
     @Override
@@ -31,7 +34,7 @@ public class SimpleSignallingSystem implements SignallingSystem {
                         }
                     }
 
-                    Signal signal = state.getResource("rail.yannick.sh/v1alpha1", "Signal", stop.getName(), Signal.class).orElseThrow();
+                    Signal signal = state.getResource(SIGNAL_API_VERSION, "Signal", stop.getName(), Signal.class).orElseThrow(() -> new NoSuchElementException("%s/Signal %s not found.".formatted(SIGNAL_API_VERSION, stop.getName())));
                     signal.getSpec().setIndication(value == 0 ? Signal.Indication.STOP : Signal.Indication.CLEAR);
                     signal.getStatus().setSystemValue(value);
 

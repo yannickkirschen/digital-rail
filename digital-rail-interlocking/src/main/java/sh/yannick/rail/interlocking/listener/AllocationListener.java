@@ -13,6 +13,7 @@ import sh.yannick.state.State;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Listener(apiVersion = "rail.yannick.sh/v1alpha1", kind = "Allocation")
@@ -28,7 +29,7 @@ public class AllocationListener implements ResourceListener<Allocation.Spec, All
 
     @Override
     public void onCreate(Allocation allocation) {
-        Configuration configuration = state.getResource(API_VERSION, "Configuration", "configuration", Configuration.class).orElseThrow();
+        Configuration configuration = state.getResource(API_VERSION, "Configuration", "configuration", Configuration.class).orElseThrow(() -> new NoSuchElementException("configuration/Configuration not found."));
 
         Optional<Graph> optionalGraph = state.getResource(API_VERSION, "Graph", allocation.getSpec().getGraph(), Graph.class);
         if (optionalGraph.isEmpty()) {
@@ -52,13 +53,12 @@ public class AllocationListener implements ResourceListener<Allocation.Spec, All
             return;
         }
 
-        if (allocation.getStatus() == null) {
-            allocation.setStatus(new Allocation.Status());
-        }
+        Allocation.Status status = new Allocation.Status();
+        allocation.setStatus(status);
 
-        allocation.getStatus().setFrom(fromName);
-        allocation.getStatus().setTo(toName);
-        allocation.getStatus().setProgress(Allocation.Progress.CALCULATING);
+        status.setFrom(fromName);
+        status.setTo(toName);
+        status.setProgress(Allocation.Progress.CALCULATING);
 
         Resource<Graph.Spec, Graph.Status> graph = optionalGraph.get();
         DepthFirstSearch<BlockVertex> search = new DepthFirstSearch<>(graph.getStatus().getVertices(), graph.getStatus().getAdjacencyList(), new SwitchDecision());
@@ -76,12 +76,12 @@ public class AllocationListener implements ResourceListener<Allocation.Spec, All
                     return block.get();
                 }).toList()).toList();
 
-        allocation.getStatus().setAllPaths(search.getPaths());
+        status.setAllPaths(search.getPaths());
 
         // TODO: find best path
         List<Block> path = paths.get(0);
-        allocation.getStatus().setChosenPath(path.stream().map(block -> block.getMetadata().getName()).toList());
-        allocation.getStatus().setProgress(Allocation.Progress.ALLOCATING);
+        status.setChosenPath(path.stream().map(block -> block.getMetadata().getName()).toList());
+        status.setProgress(Allocation.Progress.ALLOCATING);
 
         List<Switch> switches = new BasicSwitchTranslator(state).translate(path);
         List<Signal> signals = SignallingSystem.get(state, configuration.getSpec().getSignallingSystem()).translate(path);
@@ -107,7 +107,7 @@ public class AllocationListener implements ResourceListener<Allocation.Spec, All
             switches.forEach(_switch -> _switch.getStatus().setLocked(true));
             signals.forEach(signal -> signal.getStatus().setLocked(true));
             path.forEach(block -> block.getStatus().setLocked(true));
-            allocation.getStatus().setProgress(Allocation.Progress.LOCKED);
+            status.setProgress(Allocation.Progress.LOCKED);
         } else {
             transaction.rollback();
         }

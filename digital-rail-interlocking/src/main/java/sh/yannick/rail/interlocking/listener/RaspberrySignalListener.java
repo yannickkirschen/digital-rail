@@ -7,9 +7,13 @@ import sh.yannick.state.Listener;
 import sh.yannick.state.ResourceListener;
 import sh.yannick.state.State;
 
+import java.util.NoSuchElementException;
+
 @Slf4j
 @Listener(apiVersion = "rail.yannick.sh/v1alpha1", kind = "Signal")
 public class RaspberrySignalListener implements ResourceListener<Signal.Spec, Signal.Status, Signal> {
+    private static final String RASPBERRY_API_VERSION = "embedded.yannick.sh/v1alpha1";
+
     private State state;
 
     @Override
@@ -32,7 +36,7 @@ public class RaspberrySignalListener implements ResourceListener<Signal.Spec, Si
         log.info("Updating signal {} to {}", signal.getMetadata().getName(), signal.getStatus().getSystemValue());
 
         String rpi = signal.getMetadata().getLabels().get("rail.yannick.sh/raspberry");
-        Raspberry raspberry = state.getResource("embedded.yannick.sh/v1alpha1", "Raspberry", rpi, Raspberry.class).orElseThrow();
+        Raspberry raspberry = state.getResource(RASPBERRY_API_VERSION, "Raspberry", rpi, Raspberry.class).orElseThrow(() -> new NoSuchElementException("%s/Raspberry %s not found.".formatted(RASPBERRY_API_VERSION, rpi)));
 
         int systemValue = signal.getStatus().getSystemValue();
 

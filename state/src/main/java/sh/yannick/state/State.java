@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -182,6 +183,9 @@ public class State implements Closeable {
                     resources.put(key, resource);
                     listener.onUpdate(resource);
                 }
+            } catch (NoSuchElementException e) {
+                log.warn("Resource {}/{}/{} was requested but does not exist", resource.getApiVersion(), resource.getKind(), resource.getMetadata().getName());
+                resource.addError(e.getMessage());
             } catch (Exception e) {
                 log.error("Error while processing resource {}/{}/{}", resource.getApiVersion(), resource.getKind(), resource.getMetadata().getName(), e);
                 resource.addError(e.getMessage());
