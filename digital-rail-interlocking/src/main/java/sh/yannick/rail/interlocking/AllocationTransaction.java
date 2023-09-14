@@ -18,7 +18,7 @@ public class AllocationTransaction {
     private final List<Signal> signals;
 
     public boolean commit() {
-        return commitSwitches() || commitSignals();
+        return commitSwitches() && commitSignals();
     }
 
     public void rollback() {
