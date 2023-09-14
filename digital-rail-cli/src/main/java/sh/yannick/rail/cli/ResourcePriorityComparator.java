@@ -21,9 +21,9 @@ public class ResourcePriorityComparator implements Comparator<Map.Entry<File, St
         String kind2 = o2.getValue();
 
         for (String priority : PRIORITIES) {
-            if (priority.equals(kind1) && !priority.equals(kind2)) {
+            if (priority.equals(kind1)) {
                 return -1;
-            } else if (priority.equals(kind2) && !priority.equals(kind1)) {
+            } else if (priority.equals(kind2)) {
                 return 1;
             }
         }

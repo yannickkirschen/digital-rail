@@ -42,8 +42,8 @@ public class ApplyHandler {
                 files.put(file, kind);
             }
 
-            MapUtil.sort(files, new ResourcePriorityComparator());
-            for (Map.Entry<File, String> entry : files.entrySet()) {
+            Map<File, String> sortedFiles = MapUtil.sort(files, new ResourcePriorityComparator());
+            for (Map.Entry<File, String> entry : sortedFiles.entrySet()) {
                 applyFile(entry.getKey());
             }
         } else {
@@ -53,6 +53,7 @@ public class ApplyHandler {
     }
 
     private void applyFile(File file) {
+        System.out.println("Applying " + file.getName());
         Resource<?, ?> resource = client.addResource(file);
         if (resource.getErrors() != null && !resource.getErrors().isEmpty()) {
             System.out.println("Error: " + resource.getErrors());
