@@ -86,13 +86,37 @@ public class AllocationListener implements ResourceListener<Allocation.Spec, All
         List<Switch> switches = new BasicSwitchTranslator(state).translate(path);
         List<Signal> signals = SignallingSystem.get(state, configuration.getSpec().getSignallingSystem()).translate(path);
 
+        for (Switch _switch : switches) {
+            System.out.println(_switch.getMetadata().getName() + " " + _switch.getStatus().isLocked());
+            if (_switch.getStatus().isLocked()) {
+                allocation.addError("Switch %s is already locked.", _switch.getMetadata().getName());
+                return;
+            }
+        }
+
+        for (Signal signal : signals) {
+            System.out.println(signal.getMetadata().getName() + " " + signal.getStatus().isLocked());
+            if (signal.getStatus().isLocked()) {
+                allocation.addError("Signal %s is already locked.", signal.getMetadata().getName());
+                return;
+            }
+        }
+
         AllocationTransaction transaction = new AllocationTransaction(state, allocation, switches, signals);
         if (transaction.commit()) {
+            switches.forEach(_switch -> _switch.getStatus().setLocked(true));
             signals.forEach(signal -> signal.getStatus().setLocked(true));
             path.forEach(block -> block.getStatus().setLocked(true));
             allocation.getStatus().setProgress(Allocation.Progress.LOCKED);
         } else {
             transaction.rollback();
+        }
+    }
+
+    @Override
+    public void onUpdate(Allocation allocation) {
+        if (!allocation.getStatus().getProgress().equals(Allocation.Progress.RELEASED)) {
+            allocation.addError("Allocation %s is not released yet and thus cannot be updated.", allocation.getMetadata().getName());
         }
     }
 
