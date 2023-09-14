@@ -174,6 +174,11 @@ public class State implements Closeable {
                     resources.put(key, resource);
                     listener.onCreate(resource);
                 } else {
+                    // Preserve status and errors.
+                    // If we don't do this, we lose the status and errors of the resource. This results in ugly NPEs.
+                    resource.setStatus((S) resources.get(key).getStatus());
+                    resource.setErrors(resources.get(key).getErrors());
+
                     resources.put(key, resource);
                     listener.onUpdate(resource);
                 }
