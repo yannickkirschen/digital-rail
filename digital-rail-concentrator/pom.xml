@@ -13,7 +13,6 @@
     <artifactId>digital-rail-concentrator</artifactId>
 
     <dependencies>
-        <!-- TODO: duplicate SLF4J on the classpath-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
