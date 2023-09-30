@@ -62,9 +62,8 @@ public class AllocationListener implements ResourceListener<Allocation.Spec, All
 
         Resource<Graph.Spec, Graph.Status> graph = optionalGraph.get();
         DepthFirstSearch<BlockVertex> search = new DepthFirstSearch<>(graph.getStatus().getVertices(), graph.getStatus().getAdjacencyList(), new SwitchDecision());
-        search.search(fromName, toName);
-        List<List<Block>> paths = search
-            .getPaths()
+        List<List<String>> allPaths = search.search(fromName, toName);
+        List<List<Block>> paths = allPaths
             .stream()
             .map(path -> path
                 .stream()
@@ -76,7 +75,7 @@ public class AllocationListener implements ResourceListener<Allocation.Spec, All
                     return block.get();
                 }).toList()).toList();
 
-        status.setAllPaths(search.getPaths());
+        status.setAllPaths(allPaths);
 
         // TODO: find best path
         List<Block> path = paths.get(0);
