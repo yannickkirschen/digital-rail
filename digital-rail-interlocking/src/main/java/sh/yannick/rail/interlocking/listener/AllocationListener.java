@@ -119,13 +119,6 @@ public class AllocationListener implements ResourceListener<Allocation.Spec, All
         }
     }
 
-//    @Override
-//    public void onUpdate(Allocation allocation) {
-//        if (!allocation.getStatus().getProgress().equals(Allocation.Progress.RELEASED)) {
-//            allocation.addError("Allocation %s is not released yet and thus cannot be updated.", allocation.getMetadata().getName());
-//        }
-//    }
-
     private static class SwitchDecision implements GraphWalkingDecision<BlockVertex> {
         @Override
         public boolean shouldWalk(BlockVertex from, BlockVertex to, BlockVertex via) {

@@ -20,11 +20,13 @@ public class Block extends Resource<Block.Spec, Block.Status> {
 
         @JsonProperty("switch")
         private BlockSwitch blockSwitch;
+        private boolean occupied;
     }
 
     @Data
     @Resource.StatusDefinition(apiVersion = "rail.yannick.sh/v1alpha1", kind = "Block")
     public static class Status {
         private boolean locked;
+        private boolean occupied;
     }
 }
