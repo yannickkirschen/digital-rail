@@ -40,23 +40,23 @@ You can find all example resources in `./examples`.
 
 ## State of Development
 
-- 🚧Interlocking
-    - ✅Find all paths (Spurplan)
-    - ✅Determine indication/position of signals/switches on a path
-    - ✅Lock all elements on a path and transmit the indication/position of
+- 🚧 Interlocking
+    - ✅ Find all paths (Spurplan)
+    - ✅ Determine indication/position of signals/switches on a path
+    - ✅ Lock all elements on a path and transmit the indication/position of
       signals/switches to the concentrator
-    - ✅Release single elements on a path
-    - ⛔Find the best path (currently: first path)
-    - ⛔️Provide flank protection (Flankenschutz)
-    - ⛔Allocate elements in specific order (switches -> flank protective
-      signals -> signals)
-    - ⛔️Communication between interlocking systems
-- 🚧Track Field Concentrator (Gleisfeldkonzentrator, GFK)
-- 🚧CLI
-- ⛔️UI
-- ⛔️Decoders
-- ⛔️Track vacancy detection system (Gleisfreimeldeanlage)
-- ⛔Documentation (I'm so sorry ...)
+    - ✅ Release single elements on a path
+    - ⛔ Find the best path (currently: first path)
+    - ⛔️ Provide flank protection (Flankenschutz)
+    - ✅ Allocate elements in specific order (switches -> flank protective
+      signals -> signals -> starting signal)
+    - ⛔️ Communication between interlocking systems
+- 🚧 Track Field Concentrator (Gleisfeldkonzentrator, GFK)
+- 🚧 CLI
+- ⛔️ UI
+- ⛔️ Decoders
+- ⛔️ Track vacancy detection system (Gleisfreimeldeanlage)
+- ⛔ Documentation (I'm so sorry ...)
 
 ## Current look and feel
 
