@@ -20,9 +20,20 @@ public class StateBuilder {
     private final Map<SpecKey, ResourceListener<?, ?, ?>> listeners = new HashMap<>();
 
     private String name = "unnamed";
+    private boolean restricted = false;
 
     public StateBuilder withName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public StateBuilder restricted() {
+        restricted = false;
+        return this;
+    }
+
+    public StateBuilder restricted(boolean restricted) {
+        this.restricted = restricted;
         return this;
     }
 
@@ -81,6 +92,6 @@ public class StateBuilder {
     }
 
     public State build() {
-        return new State(name, resources, baseClasses, specDefinitions, statusDefinitions, listeners);
+        return new State(name, restricted, resources, baseClasses, specDefinitions, statusDefinitions, listeners);
     }
 }

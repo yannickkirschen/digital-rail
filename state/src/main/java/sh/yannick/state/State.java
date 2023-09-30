@@ -27,6 +27,10 @@ public class State implements Closeable {
     @Setter
     private String name;
 
+    @Getter
+    @Setter
+    private boolean restricted;
+
     private Map<ResourceKey, Resource<?, ?>> resources;
     private Map<SpecKey, Class<? extends Resource<?, ?>>> baseClasses;
     private Map<SpecKey, Class<?>> specDefinitions;
@@ -148,6 +152,7 @@ public class State implements Closeable {
         return mapper.treeToValue(node, javaType);
     }
 
+    // TODO: deep clone
     public <T, S, C extends Resource<T, S>> Optional<C> getResource(String apiVersion, String kind, String name, Class<C> clazz) {
         Resource<?, ?> resource = resources.get(new ResourceKey(apiVersion, kind, name));
         if (resource == null) {
@@ -166,7 +171,9 @@ public class State implements Closeable {
     @SuppressWarnings("unchecked")
     private <T, S, C extends Resource<T, S>> void triggerUpdates(C resource, ResourceKey key) {
         ResourceListener<T, S, C> listener = (ResourceListener<T, S, C>) listeners.get(new SpecKey(resource.getApiVersion(), resource.getKind())); // Unchecked, but we know it's safe
-        if (listener == null) {
+        if (listener == null && restricted) {
+            throw new IllegalArgumentException("Resource %s/%s/%s does not have registered listener (state is in restricted mode)".formatted(resource.getApiVersion(), resource.getKind(), resource.getMetadata().getName()));
+        } else if (listener == null) {
             resources.put(key, resource); // Just store the resource and do nothing
         } else {
             // TODO: call those in threads
