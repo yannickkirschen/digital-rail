@@ -55,7 +55,7 @@
 
         <spring.boot.version>3.3.2</spring.boot.version>
         <snakeyaml.version>2.2</snakeyaml.version>
-        <pi4j.version>2.6.0</pi4j.version>
+        <pi4j.version>2.6.1</pi4j.version>
         <httpclient.version>5.3.1</httpclient.version>
         <reflections.version>0.10.2</reflections.version>
         <boss.version>1.0.0-SNAPSHOT</boss.version>
